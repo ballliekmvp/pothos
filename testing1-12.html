@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track and reduce your carbon footprint with actionable tips and visual progress tools.">
+    <title>🌱Carbon Footprint Tracker🌱</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            text-align: center;
+        }
+        
+        #charts {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            gap: 20px;
+            text-align: left;
+        }
+        
+        .chart-container {
+            flex: 1;
+            height: 400px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌱Carbon Footprint Tracker🌱</h1>
+        <p>Your journey toward a sustainable lifestyle starts here!</p>
+    </header>
+
+    <main>
+        <section id="activity-logging">
+          <h2>Log Your Activities</h2>
+          <div id="activity-icons">
+            <button id="car" onclick="logActivity('car', -1)" style="width: 50px; height: 50px; font-size: 1.5em;">🚗</button>
+            <button id="bike" onclick="logActivity('bike', 10)" style="width: 50px; height: 50px; font-size: 1.5em;">🚴</button>
+            <button id="salad" onclick="logActivity('salad', 5)" style="width: 50px; height: 50px; font-size: 1.5em;">🥗</button>
+            <button id="home" onclick="logActivity('home', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🏠</button>
+            <button id="shopping" onclick="logActivity('shopping', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🛍️</button>
+            <button id="gardening" onclick="logActivity('gardening', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🏵️</button>
+            <button id="devtool positive" onclick="logActivity('gardening', 200)" style="width: 50px; height: 50px; font-size: 1.5em;">➕</button>
+            <button id="devtool negative" onclick="logActivity('gardening', -200)" style="width: 50px; height: 50px; font-size: 1.5em;">➖</button>
+          </div>
+          <p id="activity-status">Log your activities to track your carbon impact!</p>
+        </section>
+    
+
+        <!-- Visualization Tools -->
+        <section id="visualizations">
+            <h2>Your Progress</h2>
+            <div id="chart-filters">
+                <label for="start-date">Start Date:</label>
+                <input type="date" id="start-date">
+                <label for="end-date">End Date:</label>
+                <input type="date" id="end-date">
+                <button onclick="filterData()">Apply Filters</button>
+            </div>
+            <div id="charts">
+                <div class="chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+            <div id="progress-summary">
+                <p>Daily Goal Progress: <span id="goal-progress">0</span>/50 points</p>
+                <p>Weekly Achievement: <span id="goal-days">0</span>/7 days met goal</p>
+            </div>
+        </section>
+
+        <section id="rank-logging">
+            <h2>Ranking</h2>
+            <div id="activity-icons" style="display: flex; justify-content: center; gap: 20px; flex-direction: column; align-items: center;"> 
+                <div id="rank" style="width: 100px; height: 100px; font-size: 3em; 
+                                 border: 1px solid #ccc; 
+                                 border-radius: 5px; 
+                                 background-color: #e0ffe1; 
+                                 display: flex; 
+                                 justify-content: center; 
+                                 align-items: center;">🐢</div>
+                <div id="rank-progress" style="width: 200px;">
+                    <div id="progress-bar" style="width: 0%; height: 10px; background-color: #4CAF50; border-radius: 5px;"></div>
+                </div>
+            </div>
+            <p id="rank-status">Current rank: Turtle (0 points) - Next rank: Lizard (400 points)</p>
+        </section>
+
+    </main>
+
+    <script>
+        const ranks = [
+            {name: 'Turtle🐢', points: 0, emoji: '🐢'},
+            {name: 'Lizard🦎', points: 400, emoji: '🦎'},
+            {name: 'Snake🐍', points: 800, emoji: '🐍'},
+            {name: 'Alligator🐊', points: 6400, emoji: '🐊'},
+            {name: 'T-Rex🦖', points: 40960, emoji: '🦖'},
+            {name: 'Dragon🐲', points: 167526, emoji: '🐲'}
+        ];
+
+        // Data storage with localStorage
+        let activities = JSON.parse(localStorage.getItem('activities')) || [];
+        let lineChartInstance = null;
+        let pieChartInstance = null;
+        
+        function logActivity(type, points) {
+            const activity = {
+                type: type,
+                points: points,
+                timestamp: new Date().toISOString() 
+            };
+            activities.push(activity);
+            localStorage.setItem('activities', JSON.stringify(activities));
+            updateVisualizations();
+            updateStatus(type, points);
+        }
+
+        function updateVisualizations() {
+            updateLineChart();
+            updatePieChart();
+            updateProgress();
+            updateRank();
+        }
+
+        function updateLineChart() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            const dailyPoints = getDailyPoints();
+
+            if (lineChartInstance) {
+                lineChartInstance.destroy();
+            }
+
+            lineChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(dailyPoints),
+                    datasets: [{
+                        label: 'Daily Points',
+                        data: Object.values(dailyPoints),
+                        borderColor: '#4CAF50',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Points: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updatePieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const todayPoints = getTodayPoints();
+
+            if (pieChartInstance) {
+                pieChartInstance.destroy();
+            }
+
+            pieChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Earned', 'Remaining'],
+                    datasets: [{
+                        data: [todayPoints, Math.max(0, 50 - todayPoints)],
+                        backgroundColor: ['#4CAF50', '#f0f0f0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function updateRank() {
+            const todayPoints = getTodayPoints();
+            let currentRank = ranks[0];
+            let nextRank = ranks[1];
+
+            for (let i = ranks.length - 1; i >= 0; i--) {
+                if (todayPoints >= ranks[i].points) {
+                    currentRank = ranks[i];
+                    nextRank = ranks[i + 1] || ranks[i];
+                    break;
+                }
+            }
+
+            const progress = nextRank === currentRank ? 100 :
+                ((todayPoints - currentRank.points) / (nextRank.points - currentRank.points)) * 100;
+
+            const rankElement = document.getElementById('rank');
+            if (rankElement) {
+                rankElement.innerHTML = currentRank.emoji;
+            }
+
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${Math.min(100, progress)}%`;
+            }
+
+            const rankStatus = document.getElementById('rank-status');
+            if (rankStatus) {
+                rankStatus.textContent = nextRank === currentRank ? 
+                    `Congratulations! You've reached the highest rank: ${currentRank.name}!` :
+                    `Current rank: ${currentRank.name} (${todayPoints} points) - Next rank: ${nextRank.name} (${nextRank.points} points)`;
+            }
+        }
+
+        function getDailyPoints() {
+            const points = {};
+            activities.forEach(activity => {
+                const date = new Date(activity.timestamp).toISOString().split('T')[0];
+                points[date] = (points[date] || 0) + activity.points;
+            });
+            return points;
+        }
+
+        function getTodayPoints() {
+            const today = new Date().toISOString().split('T')[0];
+            return activities
+                .filter(a => new Date(a.timestamp).toISOString().split('T')[0] === today)
+                .reduce((sum, a) => sum + a.points, 0);
+        }
+
+        function updateProgress() {
+            const todayPoints = getTodayPoints();
+            document.getElementById('goal-progress').textContent = todayPoints;
+            
+            const lastWeek = new Date();
+            lastWeek.setDate(lastWeek.getDate() - 7);
+            const daysMetGoal = Object.values(getDailyPoints())
+                .filter(points => points >= 50)
+                .length;
+            document.getElementById('goal-days').textContent = daysMetGoal;
+        }
+
+        function updateStatus(type, points) {
+            const status = document.getElementById('activity-status');
+            status.textContent = `Logged: ${type} (${points > 0 ? '+' : ''}${points} points)`;
+        }
+
+        function filterData() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            
+            if (startDate && endDate) {
+                const filteredActivities = activities.filter(activity => {
+                    const date = new Date(activity.timestamp).toISOString().split('T')[0];
+                    return date >= startDate && date <= endDate;
+                });
+                
+                const originalActivities = activities;
+                activities = filteredActivities;
+                updateVisualizations();
+                activities = originalActivities;
+            }
+        }
+
+        window.onload = function() {
+            updateVisualizations();
+        };
+    </script>
+</body>
+</html>
