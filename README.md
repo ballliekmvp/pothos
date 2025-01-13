@@ -19,4 +19,4 @@ The **Carbon Footprint Tracker** is a web-based application designed to help use
 ## Getting Started
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/Carbon-Footprint-Tracker.git
+   git clone https://github.com/your-username/pothos.github.io.git
