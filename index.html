@@ -7,27 +7,7 @@
     <title>🌱Carbon Footprint Tracker🌱</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            text-align: center;
-        }
-        
-        #charts {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 20px 0;
-            gap: 20px;
-            text-align: left;
-        }
-        
-        .chart-container {
-            flex: 1;
-            height: 400px;
-            position: relative;
-        }
-    </style>
-</head>
+    </head>
 <body>
     <header>
         <h1>🌱Carbon Footprint Tracker🌱</h1>
@@ -36,21 +16,18 @@
 
     <main>
         <section id="activity-logging">
-          <h2>Log Your Activities</h2>
-          <div id="activity-icons">
-            <button id="car" onclick="logActivity('car', -1)" style="width: 50px; height: 50px; font-size: 1.5em;">🚗</button>
-            <button id="bike" onclick="logActivity('bike', 10)" style="width: 50px; height: 50px; font-size: 1.5em;">🚴</button>
-            <button id="salad" onclick="logActivity('salad', 5)" style="width: 50px; height: 50px; font-size: 1.5em;">🥗</button>
-            <button id="home" onclick="logActivity('home', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🏠</button>
-            <button id="shopping" onclick="logActivity('shopping', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🛍️</button>
-            <button id="gardening" onclick="logActivity('gardening', 15)" style="width: 50px; height: 50px; font-size: 1.5em;">🏵️</button>
-            
-          </div>
-          <p id="activity-status">Log your activities to track your carbon impact!</p>
+            <h2>Log Your Activities</h2>
+            <div id="activity-icons">
+                <button id="car" onclick="logActivity('car', -1)">🚗</button>
+                <button id="bike" onclick="logActivity('bike', 10)">🚴</button>
+                <button id="salad" onclick="logActivity('salad', 5)">🥗</button>
+                <button id="home" onclick="logActivity('home', 15)">🏠</button>
+                <button id="shopping" onclick="logActivity('shopping', 15)">🛍️</button>
+                <button id="gardening" onclick="logActivity('gardening', 15)">🏵️</button>
+            </div>
+            <p id="activity-status">Log your activities to track your carbon impact!</p>
         </section>
-    
 
-        <!-- Visualization Tools -->
         <section id="visualizations">
             <h2>Your Progress</h2>
             <div id="chart-filters">
@@ -76,16 +53,9 @@
 
         <section id="rank-logging">
             <h2>Ranking</h2>
-            <div id="activity-icons" style="display: flex; justify-content: center; gap: 20px; flex-direction: column; align-items: center;"> 
-                <div id="rank" style="width: 100px; height: 100px; font-size: 3em; 
-                                 border: 1px solid #ccc; 
-                                 border-radius: 5px; 
-                                 background-color: #e0ffe1; 
-                                 display: flex; 
-                                 justify-content: center; 
-                                 align-items: center;">🐢</div>
-                <div id="rank-progress" style="width: 200px;">
-                    <div id="progress-bar" style="width: 0%; height: 10px; background-color: #4CAF50; border-radius: 5px;"></div>
+            <div id="rank-display">
+                <div id="rank">🐢</div> <div id="rank-progress">
+                    <div id="progress-bar"></div>
                 </div>
             </div>
             <p id="rank-status">Current rank: Turtle (0 points) - Next rank: Lizard (400 points)</p>
@@ -107,12 +77,12 @@
         let activities = JSON.parse(localStorage.getItem('activities')) || [];
         let lineChartInstance = null;
         let pieChartInstance = null;
-        
+
         function logActivity(type, points) {
             const activity = {
                 type: type,
                 points: points,
-                timestamp: new Date().toISOString() 
+                timestamp: new Date().toISOString()
             };
             activities.push(activity);
             localStorage.setItem('activities', JSON.stringify(activities));
@@ -135,6 +105,7 @@
                 lineChartInstance.destroy();
             }
 
+            // Customize Chart.js colors to fit the theme (no white)
             lineChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -142,8 +113,12 @@
                     datasets: [{
                         label: 'Daily Points',
                         data: Object.values(dailyPoints),
-                        borderColor: '#4CAF50',
-                        tension: 0.1
+                        borderColor: '#78c078', // Green line color
+                        backgroundColor: 'rgba(120, 192, 120, 0.2)', // Semi-transparent green area below line
+                        tension: 0.4, // Add some curve to the line
+                        fill: true, // Fill the area below the line
+                        pointBackgroundColor: '#a8e0a8', // Point color
+                        pointBorderColor: '#353b40' // Point border color
                     }]
                 },
                 options: {
@@ -155,6 +130,32 @@
                                 label: function(context) {
                                     return `Points: ${context.parsed.y}`;
                                 }
+                            },
+                            backgroundColor: '#444b52', // Darker tooltip background
+                            titleColor: '#d4d4d4', // Light gray tooltip title
+                            bodyColor: '#d4d4d4' // Light gray tooltip body
+                        },
+                        legend: {
+                           labels: {
+                                color: '#d4d4d4' // Light gray legend text
+                           }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#b0b0b0' // Muted gray x-axis labels
+                            },
+                            grid: {
+                                color: '#444b52' // Darker grid lines
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#b0b0b0' // Muted gray y-axis labels
+                            },
+                             grid: {
+                                color: '#444b52' // Darker grid lines
                             }
                         }
                     }
@@ -170,37 +171,53 @@
                 pieChartInstance.destroy();
             }
 
+            // Customize Chart.js colors to fit the theme (no white)
             pieChartInstance = new Chart(ctx, {
                 type: 'pie',
                 data: {
                     labels: ['Earned', 'Remaining'],
                     datasets: [{
                         data: [todayPoints, Math.max(0, 50 - todayPoints)],
-                        backgroundColor: ['#4CAF50', '#f0f0f0']
+                        backgroundColor: ['#4CAF50', '#5a626b'], // Green and dark gray colors
+                        borderColor: '#353b40' // Border color for segments
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                     plugins: {
+                        tooltip: {
+                             backgroundColor: '#444b52', // Darker tooltip background
+                            titleColor: '#d4d4d4', // Light gray tooltip title
+                            bodyColor: '#d4d4d4' // Light gray tooltip body
+                        },
+                         legend: {
+                           labels: {
+                                color: '#d4d4d4' // Light gray legend text
+                           }
+                        }
+                    }
                 }
             });
         }
 
         function updateRank() {
-            const todayPoints = getTodayPoints();
+            const totalPoints = activities.reduce((sum, a) => sum + a.points, 0); // Use total points for rank
             let currentRank = ranks[0];
-            let nextRank = ranks[1];
+            let nextRank = null;
 
-            for (let i = ranks.length - 1; i >= 0; i--) {
-                if (todayPoints >= ranks[i].points) {
+            for (let i = 0; i < ranks.length; i++) {
+                if (totalPoints >= ranks[i].points) {
                     currentRank = ranks[i];
-                    nextRank = ranks[i + 1] || ranks[i];
-                    break;
+                    if (i < ranks.length - 1) {
+                        nextRank = ranks[i + 1];
+                    } else {
+                        nextRank = ranks[i]; // Stay at the highest rank
+                    }
+                } else {
+                    break; // Found the next rank
                 }
             }
-
-            const progress = nextRank === currentRank ? 100 :
-                ((todayPoints - currentRank.points) / (nextRank.points - currentRank.points)) * 100;
 
             const rankElement = document.getElementById('rank');
             if (rankElement) {
@@ -208,17 +225,26 @@
             }
 
             const progressBar = document.getElementById('progress-bar');
-            if (progressBar) {
-                progressBar.style.width = `${Math.min(100, progress)}%`;
-            }
-
             const rankStatus = document.getElementById('rank-status');
-            if (rankStatus) {
-                rankStatus.textContent = nextRank === currentRank ? 
-                    `Congratulations! You've reached the highest rank: ${currentRank.name}!` :
-                    `Current rank: ${currentRank.name} (${todayPoints} points) - Next rank: ${nextRank.name} (${nextRank.points} points)`;
+
+            if (currentRank === nextRank) { // At the highest rank
+                 if (progressBar) {
+                    progressBar.style.width = '100%';
+                 }
+                 if (rankStatus) {
+                    rankStatus.textContent = `Congratulations! You've reached the highest rank: ${currentRank.name}!`;
+                 }
+            } else {
+                const progress = ((totalPoints - currentRank.points) / (nextRank.points - currentRank.points)) * 100;
+                 if (progressBar) {
+                    progressBar.style.width = `${Math.min(100, progress)}%`;
+                 }
+                 if (rankStatus) {
+                    rankStatus.textContent = `Current rank: ${currentRank.name} (${totalPoints} total points) - Next rank: ${nextRank.name} (${nextRank.points} points)`;
+                 }
             }
         }
+
 
         function getDailyPoints() {
             const points = {};
@@ -229,6 +255,7 @@
             return points;
         }
 
+         // This function now gets points for the *current* day for the daily goal
         function getTodayPoints() {
             const today = new Date().toISOString().split('T')[0];
             return activities
@@ -236,17 +263,34 @@
                 .reduce((sum, a) => sum + a.points, 0);
         }
 
+
         function updateProgress() {
-            const todayPoints = getTodayPoints();
+            const todayPoints = getTodayPoints(); // Use the function that gets points for *today*
             document.getElementById('goal-progress').textContent = todayPoints;
-            
+
             const lastWeek = new Date();
             lastWeek.setDate(lastWeek.getDate() - 7);
-            const daysMetGoal = Object.values(getDailyPoints())
-                .filter(points => points >= 50)
-                .length;
-            document.getElementById('goal-days').textContent = daysMetGoal;
+
+            // Calculate days met goal in the last 7 *recorded* days with activity
+            const dailyPoints = getDailyPoints();
+            const recentDates = Object.keys(dailyPoints)
+                .filter(dateString => new Date(dateString) >= lastWeek)
+                .sort(); // Sort dates to ensure correct week
+
+            let daysMetGoalCount = 0;
+             // Iterate through the last 7 days with data
+            const lastSevenDatesWithData = recentDates.slice(-7);
+
+            lastSevenDatesWithData.forEach(date => {
+                 if (dailyPoints[date] >= 50) {
+                    daysMetGoalCount++;
+                 }
+            });
+
+
+            document.getElementById('goal-days').textContent = daysMetGoalCount;
         }
+
 
         function updateStatus(type, points) {
             const status = document.getElementById('activity-status');
@@ -254,21 +298,36 @@
         }
 
         function filterData() {
-            const startDate = document.getElementById('start-date').value;
-            const endDate = document.getElementById('end-date').value;
-            
-            if (startDate && endDate) {
-                const filteredActivities = activities.filter(activity => {
-                    const date = new Date(activity.timestamp).toISOString().split('T')[0];
-                    return date >= startDate && date <= endDate;
+            const startDateInput = document.getElementById('start-date').value;
+            const endDateInput = document.getElementById('end-date').value;
+
+            if (startDateInput && endDateInput) {
+                 // Get original activities before filtering
+                const originalActivities = JSON.parse(localStorage.getItem('activities')) || [];
+
+                const filteredActivities = originalActivities.filter(activity => {
+                    const activityDate = new Date(activity.timestamp);
+                    const startDate = new Date(startDateInput);
+                    const endDate = new Date(endDateInput);
+
+                     // Set time to start/end of the day for inclusive filtering
+                    startDate.setHours(0, 0, 0, 0);
+                    endDate.setHours(23, 59, 59, 999);
+
+                    return activityDate >= startDate && activityDate <= endDate;
                 });
-                
-                const originalActivities = activities;
+
+                // Temporarily replace activities with filtered data for visualization
                 activities = filteredActivities;
-                updateVisualizations();
-                activities = originalActivities;
+                updateVisualizations(); // Update charts and summary with filtered data
+                activities = originalActivities; // Restore original data
+            } else {
+                // If filters are cleared, update with all data
+                 activities = JSON.parse(localStorage.getItem('activities')) || [];
+                 updateVisualizations();
             }
         }
+
 
         window.onload = function() {
             updateVisualizations();
