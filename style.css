@@ -1,0 +1,242 @@
+/* styles.css */
+
+/* Basic Reset and Body Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #2a2f36; /* Deep Charcoal Background */
+    color: #d4d4d4; /* Light Gray Text */
+    text-align: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Header Styling */
+header {
+    background-color: #3e444c; /* Slightly lighter charcoal */
+    color: #a8e0a8; /* Soft Green for heading */
+    padding: 2rem 1rem;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+header h1 {
+    margin-top: 0;
+    color: #78c078; /* A bit brighter green for the main title */
+}
+
+header p {
+    color: #b0b0b0; /* Muted gray for subtitle */
+}
+
+/* Main Content Area */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Section Styling */
+section {
+    background-color: #353b40; /* Darker gray for sections */
+    padding: 30px 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    text-align: left; /* Align content left within sections */
+}
+
+section h2 {
+    text-align: center; /* Center section titles */
+    color: #78c078; /* Green for section titles */
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #5a626b; /* Subtle separator */
+    padding-bottom: 10px;
+}
+
+/* Activity Logging Section */
+#activity-logging #activity-icons {
+    display: flex;
+    justify-content: center; /* Center the buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 20px;
+}
+
+#activity-logging button {
+    background-color: #4CAF50; /* Green button background */
+    color: #2a2f36; /* Dark text on green */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 1.5em; /* Larger font size for emojis */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    width: 60px; /* Consistent button size */
+    height: 60px; /* Consistent button size */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#activity-logging button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+#activity-logging button:active {
+    background-color: #39843c; /* Even darker on active */
+    transform: translateY(0);
+}
+
+#activity-status {
+    text-align: center; /* Center status message */
+    color: #b0b0b0; /* Muted gray */
+    font-style: italic;
+}
+
+
+/* Visualization Tools Section */
+#chart-filters {
+    text-align: center; /* Center filter controls */
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#chart-filters label {
+    color: #d4d4d4; /* Light gray label text */
+    font-weight: bold;
+}
+
+#chart-filters input[type="date"],
+#chart-filters button {
+    padding: 8px 12px;
+    border: 1px solid #5a626b; /* Border color */
+    border-radius: 4px;
+    background-color: #444b52; /* Darker input/button background */
+    color: #d4d4d4; /* Light gray text */
+    font-size: 1em;
+}
+
+#chart-filters button {
+    background-color: #5a626b; /* Button background */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#chart-filters button:hover {
+    background-color: #6b7580; /* Lighter button background on hover */
+}
+
+
+#charts {
+    display: flex;
+    flex-wrap: wrap; /* Allow charts to wrap on smaller screens */
+    justify-content: space-around; /* Distribute space around charts */
+    align-items: flex-start; /* Align items to the top */
+    margin: 20px 0;
+    gap: 30px; /* Increase gap between chart containers */
+}
+
+.chart-container {
+    flex: 1;
+    min-width: 300px; /* Minimum width for charts */
+    height: 400px; /* Consistent height for charts */
+    position: relative;
+    background-color: #444b52; /* Darker background for chart areas */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2); /* Inner shadow */
+}
+
+/* Styling for Chart.js canvas - may need specific overrides in JS if needed */
+canvas {
+    background-color: transparent !important; /* Ensure chart background is transparent */
+}
+
+#progress-summary {
+    text-align: center; /* Center progress text */
+    margin-top: 30px;
+    font-size: 1.1em;
+    color: #b0b0b0; /* Muted gray */
+}
+
+#progress-summary span {
+    font-weight: bold;
+    color: #78c078; /* Green for progress numbers */
+}
+
+/* Ranking Section */
+#rank-logging #rank-display { /* Changed ID from activity-icons */
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+#rank {
+    width: 100px;
+    height: 100px;
+    font-size: 3em;
+    border: 2px solid #78c078; /* Green border */
+    border-radius: 50%; /* Make it round */
+    background-color: #5a626b; /* Background for the rank circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(120, 192, 120, 0.5); /* Green glow effect */
+}
+
+#rank-progress {
+    width: 80%; /* Make progress bar wider */
+    max-width: 400px; /* Maximum width for progress bar */
+    background-color: #5a626b; /* Background for empty progress bar */
+    border-radius: 5px;
+    overflow: hidden; /* Hide overflow for smooth progress bar */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#progress-bar {
+    height: 15px; /* Make progress bar taller */
+    background-color: #4CAF50; /* Green progress color */
+    border-radius: 5px;
+    transition: width 0.5s ease-in-out; /* Smooth animation for progress */
+}
+
+#rank-status {
+    text-align: center; /* Center rank status */
+    color: #b0b0b0; /* Muted gray */
+    margin-top: 15px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    #charts {
+        flex-direction: column; /* Stack charts vertically on small screens */
+        gap: 20px; /* Adjust gap for stacking */
+    }
+
+    .chart-container {
+        width: 100%; /* Full width for stacked charts */
+        min-width: auto;
+    }
+
+    #activity-logging #activity-icons,
+    #chart-filters {
+        flex-direction: column; /* Stack buttons and filters vertically */
+        align-items: stretch; /* Stretch items to fill width */
+    }
+
+    #activity-logging button,
+    #chart-filters input[type="date"],
+    #chart-filters button {
+         width: auto; /* Allow width to be determined by content/padding */
+    }
+}
